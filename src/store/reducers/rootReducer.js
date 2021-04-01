@@ -1,6 +1,10 @@
-import {combineReducers} from 'redux';
+import {combineReducers, createStore} from 'redux';
 import quizReducer from './quiz'
+import createReducer from './create'
+
 
 export default combineReducers ({
-    quiz: quizReducer
+    quiz: quizReducer,
+    create: createReducer
 })
+

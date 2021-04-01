@@ -1,17 +1,17 @@
 import React from 'react'
+import { connect } from 'react-redux'
 import { NavLink } from 'react-router-dom'
-import classes from './QuizList.module.scss'
-import axios from  '../../axios/axios-quiz'
 import Loader from '../../components/UI/Loader/Loader'
+import classes from './QuizList.module.scss'
+import {fetchQuizes} from '../../store/actions/quiz'
+// import rootReducer from '../../store/reducers/rootReducer'
 
-export default class QuizList extends React.Component {
-    state = {
-        quizes: [],
-        loader: true
-    }
+
+class QuizList extends React.Component {
+    
     
     renderQuizes() {
-        return this.state.quizes.map((quiz, index)=> {
+        return this.props.quizes.map((quiz, index)=> {
             return (
                 <li
                     key={quiz.id}
@@ -26,24 +26,25 @@ export default class QuizList extends React.Component {
         })
     }
 
-    async componentDidMount() {
-        try {
-            const response = await axios.get('quizes.json')
-            const quizes = []
-            Object.keys(response.data).forEach((key,index) => {
-                quizes.push({
-                    id : key,
-                    name: `Тест №${index + 1}`
-                })
-            })
+    componentDidMount() {
+        this.props.fetchQuizes()
+        // try {
+        //     const response = await axios.get('quizes.json')
+        //     const quizes = []
+        //     Object.keys(response.data).forEach((key,index) => {
+        //         quizes.push({
+        //             id : key,
+        //             name: `Тест №${index + 1}`
+        //         })
+        //     })
 
-            this.setState({
-                quizes,
-                loader: false
-            })
-        } catch(e) {
-            console.log(e);
-        }
+        //     this.setState({
+        //         quizes,
+        //         loader: false
+        //     })
+        // } catch(e) {
+        //     console.log(e);
+        // }
     }
     render () {
         return (
@@ -52,7 +53,7 @@ export default class QuizList extends React.Component {
             >
                 <div>
                     <h1>Список тестов</h1>
-                    {this.state.loader ? <Loader></Loader>
+                    {this.props.loading && this.props.quizes.length !== 0  ? <Loader></Loader>
                     : <ul>
                         {this.renderQuizes()}
                     </ul> }
@@ -61,3 +62,18 @@ export default class QuizList extends React.Component {
         )
     }
 }
+
+function mapStateToProps(state) {
+    return {
+        quizes: state.quiz.quizes,
+        loading: state.quiz.loading
+    }
+}
+
+function mapDispatchToProps(dispatch) {
+    return {
+        fetchQuizes: () => dispatch(fetchQuizes())
+    }
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(QuizList)
