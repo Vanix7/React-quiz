@@ -2,7 +2,8 @@ import React from 'react';
 import classes from './Auth.module.scss'
 import Button from '../../components/UI/Button/Button'
 import Input from '../../components/UI/Input/Input'
-import axios from 'axios'
+import { connect } from 'react-redux';
+import { auth } from '../../store/actions/auth'
 
 
 function validateEmail(email) {
@@ -10,7 +11,7 @@ function validateEmail(email) {
     return re.test(String(email).toLowerCase());
 }
 
-export default class Auth extends React.Component {
+class Auth extends React.Component {
     state = {
         isFormValid: false,
         formControls: {
@@ -41,32 +42,20 @@ export default class Auth extends React.Component {
         }
     }
     loginHandler = async () => {
-        const authData = {
-            email: this.state.formControls.email.value,
-            password: this.state.formControls.pass.value,
-            returnSecureToken: true
-        }
-        try {
-            const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=AIzaSyBj7jN1OBDQ9Sfwu1Wn3jtNhOFfn9ahti4', authData)
-            console.log(response.data);
-            console.log('Вошёл');
-        } catch (e) {
-            console.log(e);
-        }
+        this.props.auth(
+            this.state.formControls.email.value, 
+            this.state.formControls.pass.value, 
+            true
+        )
+
     }
-    registerHandler = async () => {
-        const authData = {
-            email: this.state.formControls.email.value,
-            password: this.state.formControls.pass.value,
-            returnSecureToken: true
-        }
-        try {
-            const response = await axios.post('https://identitytoolkit.googleapis.com/v1/accounts:signUp?key=AIzaSyBj7jN1OBDQ9Sfwu1Wn3jtNhOFfn9ahti4', authData)
-            console.log(response.data);
-        } catch (e) {
-            console.log(e);
-            console.log('vanix');
-        }
+    registerHandler = () => {
+        
+        this.props.auth(
+            this.state.formControls.email.value, 
+            this.state.formControls.pass.value, 
+            false
+        )
 
 
     }
@@ -176,3 +165,12 @@ export default class Auth extends React.Component {
         )
     }
 }
+
+
+function mapDispatchToProps (dispatch) {
+    return {
+        auth: (email, password, isLogin) => dispatch(auth(email, password, isLogin))
+    }
+}
+
+export default connect(null, mapDispatchToProps)(Auth)
