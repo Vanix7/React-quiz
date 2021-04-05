@@ -21,3 +21,5 @@ export const RESET_QUIZ_QREATION = 'RESET_QUIZ_QREATION'
 export const AUTH_SUCCESS = 'AUTH_SUCCESS'
 
 export const AUTH_LOGOUT = 'AUTH_LOGOUT'
+
+export const SHOW_PROMT = 'SHOW_PROMT'

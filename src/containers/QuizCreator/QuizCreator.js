@@ -26,47 +26,63 @@ function createFormControls() {
         }, {required: true}),
         option1: createOptionControl(1),
         option2: createOptionControl(2),
-        option3: createOptionControl(3),
-        option4: createOptionControl(4),
     }
 }
 class QuizCreator extends React.Component {
     state = {
         isFormValid: false,
         rightAnswerId: 1,
-        formControls: createFormControls()
+        formControls: createFormControls(),
+        number: 3,
+        options: [
+            {text: 1, value: 1},
+            {text: 2, value: 2},
+        ],
+        hideImg: true,
+        img: '',
+        promt: ''
     }
     submitHandler = event => {
         event.preventDefault()
     }
     addQuestionHandler = (event) => {
         event.preventDefault()
-
-        const {question, option1, option2, option3, option4} = this.state.formControls
-
+        const answers = []
+        const QuestOpt = this.state.formControls
+        let question
+        for (let key in QuestOpt) {
+            if (key === 'question') {
+                question = QuestOpt[key]
+            } else {
+                answers.push({text: QuestOpt[key].value, id: QuestOpt[key].id})
+            }
+        }
         const questionItem = {
             question: question.value,
             id: this.props.quiz.length + 1,
+            img: this.state.img,
+            promt: this.state.promt,
             rightAnswerId: this.state.rightAnswerId,
-            answers: [
-                {text: option1.value, id: option1.id},
-                {text: option2.value, id: option2.id},                
-                {text: option3.value, id: option3.id},                
-                {text: option4.value, id: option4.id},                
-            ]
+            answers: answers
         }
         this.props.createQuizQuestion(questionItem)
+        console.log(this.state.promt);
         this.setState({
             isFormValid: false,
             rightAnswerId: 1,
-            formControls: createFormControls()
+            formControls: createFormControls(),
+            number: 3,
+            hideImg: true,
+            promt: '',
+            img: '',
         })
-    }
+        console.log(this.state.promt);
 
+    }
+    
     createQuizHandler =  event => {
         event.preventDefault()
 
-        console.log(this.state.quiz)
 
         
         this.setState({
@@ -108,8 +124,21 @@ class QuizCreator extends React.Component {
                         touched={control.touched}
                         errorMessage={control.errorMessage}
                         onChange={event => this.changeHandler(event.target.value, controlName)}
-                    >Привет</Input>
-                    {index === 0 ? <hr/> : null}
+                    />
+                    {index === 0 ?
+                    <div>
+                        {this.state.hideImg ?
+                        <Button
+                            type="primary"
+                            onClick={this.addImg}
+                        >Добавить картинку</Button>:
+                        <Input
+                            value={this.state.img}
+                            onChange = {event => this.changeImgUrl(event.target.value)}
+                        />}
+                        <hr/> 
+                    </div>
+                      : null}
                 </Auxillary>
             )
         })
@@ -120,17 +149,40 @@ class QuizCreator extends React.Component {
             rightAnswerId: +event.target.value
         })
     }
+
+    addAnswer = () => {
+        const editForm = {...this.state.formControls}
+        const editSelect = [...this.state.options]
+        const number = this.state.number
+        editSelect.push({text: number, value: number})
+        editForm[`option${number}`] = createOptionControl(number)
+        this.setState({
+            formControls: editForm,
+            options: editSelect,
+            number: number + 1
+        })
+    }
+    addImg = () => {
+        this.setState({
+            hideImg: !this.state.hideImg
+        })
+    }
+    changeImgUrl = (value) => {
+        this.setState({
+            img: value
+        })
+    }
+    changePromt = (value) => {
+        this.setState({
+            promt: value
+        })
+    }
     render () {
         const select = <Select
             label="Выберите правильный ответ"
             value={this.state.rightAnswerId}
             onChange = {this.selectChangeHandler}
-            options={[
-                {text: 1, value: 1},
-                {text: 2, value: 2},
-                {text: 3, value: 3},
-                {text: 4, value: 4},
-            ]}
+            options={this.state.options}
         />
         return (
             <div className={classes.QuizCreator}>
@@ -140,8 +192,15 @@ class QuizCreator extends React.Component {
                     <form onSubmit={this.submitHandler}>
                         { this.renderControls() }
 
-
+                        { <Button
+                            type="primary"
+                            onClick={this.addAnswer}
+                        >Добавить ответ</Button>}
                         { select }
+                        {<Input
+                            value={this.state.promt}
+                            onChange = {event => this.changePromt(event.target.value)}
+                        />}
                         <Button
                             type='primary'
                             onClick={this.addQuestionHandler}
@@ -149,7 +208,6 @@ class QuizCreator extends React.Component {
                         >
                             Добавить вопрос
                         </Button>
-                        {console.log(this.props)}
                         <Button
                             type='success'
                             onClick={this.createQuizHandler}

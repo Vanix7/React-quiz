@@ -6,7 +6,7 @@ import QuizCreator from './containers/QuizCreator/QuizCreator'
 import Auth from './containers/Auth/Auth'
 import Logout from './components/Logout/Logout'
 import {Redirect, Route, Switch, withRouter} from 'react-router-dom'
-import { connect } from 'react-redux';
+import { connect } from 'react-redux';  
 import { autoLogin } from './store/actions/auth'
 import {Component} from 'react'
 
@@ -55,3 +55,4 @@ function mapDispatchToProps(dispatch) {
   }
 }
 export default withRouter(connect(mapStateToProps, mapDispatchToProps)(App))
+// export default connect(mapStateToProps, mapDispatchToProps)(App)

@@ -6,7 +6,11 @@ const ActiveQuiz = props => (
         <p className={classes.Question}>
             <span>
                 <strong>{props.answerNumber}. </strong>
-               {props.question}
+                {props.question}
+                { 
+                props.img ? 
+                <img src={props.img} width="500" alt="Не удалось загрузить изображение(((("></img>
+                : null}
             </span>
             <small>{props.answerNumber + " из " + props.quizLength}</small>
         </p>
@@ -15,6 +19,14 @@ const ActiveQuiz = props => (
             func={props.func}
             state = {props.state}
         />
+        {
+            props.showPromt ?
+            <span>
+                {props.promt}   
+            </span>
+            : null
+        }
+        
     </div>
 )
 

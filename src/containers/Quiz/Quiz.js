@@ -19,6 +19,7 @@ class Quiz extends Component {
         this.props.retryQuiz()
     }
     render () {
+        console.log(this.props);
         return (
             <div className={classes.Quiz}>
                 <div className={classes.QuizWrapper}>
@@ -34,11 +35,14 @@ class Quiz extends Component {
                             />
                             : <ActiveQuiz
                             answers={this.props.quiz[this.props.activeQuestion].answers}
+                            img={this.props.quiz[this.props.activeQuestion].img}
                             question={this.props.quiz[this.props.activeQuestion].question}
                             func = {this.props.onAnswerClick}
                             quizLength ={this.props.quiz.length}
                             answerNumber = {this.props.activeQuestion + 1}
                             state={this.props.answerState}
+                            showPromt={this.props.showPromt}
+                            promt={this.props.quiz[this.props.activeQuestion].promt}
                             /> 
                     }                  
                 </div>             
@@ -54,7 +58,8 @@ function mapStateToProps(state) {
         activeQuestion: state.quiz.activeQuestion,
         answerState: state.quiz.answerState, // {[id]: 'success' 'error'}
         quiz: state.quiz.quiz,
-        loading: state.quiz.loading
+        loading: state.quiz.loading,
+        showPromt: state.quiz.showPromt
     }
 }
 

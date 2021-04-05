@@ -7,7 +7,7 @@ import {
     QUIZ_SET_STATE, 
     FINISH_QUIZ, 
     QUIZ_NEXT_QUESTION, 
-    QUIZ_RETRY} from './actionTypes'
+    QUIZ_RETRY, SHOW_PROMT} from './actionTypes'
 
 
 
@@ -58,7 +58,6 @@ export function fetchQuizById(quizId) {
         try {
             const response = await axios.get(`quizes/${quizId}.json`)
             const quiz = response.data 
-            console.log(quiz)
             dispatch(fetchQuizSuccess(quiz))
         } catch (e) {
             dispatch(fetchQuizesError(e))
@@ -100,7 +99,7 @@ export function onAnswerClick(answerId) {
         if (state.answerState) {
             const key = Object.keys(state.answerState)[0]
             if (state.answerState[key] === 'success') {
-                return 
+                return  
             }
         }
         const question = state.quiz[state.activeQuestion]
@@ -112,7 +111,7 @@ export function onAnswerClick(answerId) {
             }
 
             dispatch(quizSetState({[answerId]: 'success'}, results))
-
+            dispatch(showPromt(false))
             const timeout = window.setTimeout(() => {
                 if (isQuizFinished(state)) {
 
@@ -127,10 +126,16 @@ export function onAnswerClick(answerId) {
         } else {
             results[question.id] = 'error'
             dispatch(quizSetState({[answerId]: 'error'}, results))
+            dispatch(showPromt(true))
         }
     }
 }
-
+export function showPromt(showPromt) {
+    return {
+        type: SHOW_PROMT,
+        showPromt
+    }
+}
 export function isQuizFinished(state) {
     return state.activeQuestion + 1 === state.quiz.length
 }
